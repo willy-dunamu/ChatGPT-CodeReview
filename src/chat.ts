@@ -1,11 +1,11 @@
 // import { ChatGPTAPI } from 'chatgpt';
-// import { OpenAIChat } from "langchain/llms/openai";
-import { AzureOpenAI } from 'openai';
+import { OpenAIChat } from "langchain/llms/openai";
+// import { AzureOpenAI } from 'openai';
 
 export class Chat {
   // private chatAPI: ChatGPTAPI;
-  // private openAiChat: OpenAIChat;
-  private client: AzureOpenAI;
+  private openAiChat: OpenAIChat;
+  // private client: AzureOpenAI;
 
   constructor(apikey: string) {
     // this.chatAPI = new ChatGPTAPI({
@@ -21,22 +21,16 @@ export class Chat {
     //       : undefined,
     //   },
     // });
-    // this.openAiChat = new OpenAIChat({
-    //   modelName: process.env.MODEL || 'gpt-4o',
-    //   temperature: +(process.env.temperature || 0) || 1,
-    //   azureOpenAIApiVersion: '2024-04-01-preview',
-    //   azureOpenAIApiKey: apikey,
-    //   azureOpenAIApiDeploymentName: 'D-OAI-model-deploy',
-    //   azureOpenAIBasePath: process.env.OPENAI_API_ENDPOINT || 'https://d-oai-dev.openai.azure.com',
-    // });
-
-
-    this.client = new AzureOpenAI({
-      deployment: 'D-OAI-model-deploy',
-      apiVersion: '2024-04-01-preview',
-      endpoint: process.env.OPENAI_API_ENDPOINT || 'https://d-oai-dev.openai.azure.com',
-      apiKey: apikey,
+    this.openAiChat = new OpenAIChat({
+      modelName: process.env.MODEL || 'gpt-4o',
+      temperature: +(process.env.temperature || 0) || 1,
+      azureOpenAIApiVersion: '2024-04-01-preview',
+      azureOpenAIApiKey: apikey,
+      azureOpenAIApiDeploymentName: 'D-OAI-model-deploy',
+      azureOpenAIBasePath: process.env.OPENAI_API_ENDPOINT || 'https://d-oai-dev.openai.azure.com',
     });
+
+
   }
 
   private generatePrompt = (patch: string) => {
@@ -62,32 +56,10 @@ export class Chat {
     const prompt = this.generatePrompt(patch);
 
     // const res = await this.chatAPI.sendMessage(prompt);
-    // const result = await this.openAiChat.call(prompt);
+    const result = await this.openAiChat.call(prompt);
 
     console.timeEnd('code-review cost');
     // return res.text;
-
-    let result = '';
-
-    const events = await this.client.chat.completions.create({
-      stream: true,
-      messages: [
-        {
-          role: 'assistant',
-          content: prompt,
-        },
-      ],
-      model: 'gpt-4o',
-      temperature: 0,
-    });
-
-    for await (const event of events) {
-      for (const choice of event.choices) {
-        if (choice.delta?.content) {
-          result += choice.delta?.content;
-        }
-      }
-    }
     return result;
   };
 }
