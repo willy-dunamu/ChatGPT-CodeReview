@@ -25,8 +25,10 @@
     "@vercel/edge": "^0.2.7",
     "chatgpt": "^5",
     "dotenv": "^16.0.3",
+    "langchain": "^0.0.186",
     "next": "^13.1.6",
     "node-fetch": "^3.3.0",
+    "openai": "^4.57.3",
     "probot": "^12.2.4"
   },
   "devDependencies": {
