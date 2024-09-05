@@ -25,7 +25,7 @@ export class Chat {
       azureOpenAIApiVersion: '2024-04-01-preview',
       azureOpenAIApiKey: apikey,
       azureOpenAIApiDeploymentName: 'D-OAI-model-deploy',
-      azureOpenAIBasePath: 'https://d-oai-dev.openai.azure.com',
+      azureOpenAIBasePath: process.env.OPENAI_API_ENDPOINT || 'https://d-oai-dev.openai.azure.com',
     });
   }
 
