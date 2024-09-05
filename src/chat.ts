@@ -6,7 +6,7 @@ export class Chat {
   constructor(apikey: string) {
     this.chatAPI = new AzureOpenAI({
       apiKey: apikey,
-      baseURL: 'https://d-oai-dev.openai.azure.com',
+      endpoint: 'https://d-oai-dev.openai.azure.com',
       deployment: 'D-OAI-model-deploy',
       apiVersion: '2024-04-01-preview',
     });
@@ -42,7 +42,6 @@ export class Chat {
           content: prompt,
         },
       ],
-      // max_tokens: 800,
       model: 'gpt-4o',
       temperature: 0.0,
     });
