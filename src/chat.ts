@@ -8,6 +8,7 @@ export class Chat {
       apiKey: apikey,
       baseURL: 'https://d-oai-dev.openai.azure.com',
       deployment: 'D-OAI-model-deploy',
+      apiVersion: '2024-04-01-preview',
     });
   }
 
