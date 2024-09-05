@@ -34,7 +34,7 @@ export class Chat {
     this.client = new AzureOpenAI({
       deployment: 'D-OAI-model-deploy',
       apiVersion: '2024-04-01-preview',
-      endpoint: 'https://d-oai-dev.openai.azure.com',
+      endpoint: process.env.OPENAI_API_ENDPOINT || 'https://d-oai-dev.openai.azure.com',
       apiKey: apikey,
     });
   }
