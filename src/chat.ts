@@ -1,20 +1,13 @@
-import { ChatGPTAPI } from 'chatgpt';
+import { AzureOpenAI } from 'openai';
+
 export class Chat {
-  private chatAPI: ChatGPTAPI;
+  private chatAPI: AzureOpenAI;
 
   constructor(apikey: string) {
-    this.chatAPI = new ChatGPTAPI({
+    this.chatAPI = new AzureOpenAI({
       apiKey: apikey,
-      apiBaseUrl:
-        process.env.OPENAI_API_ENDPOINT || 'https://api.openai.com/v1',
-      completionParams: {
-        model: process.env.MODEL || 'gpt-4o',
-        temperature: +(process.env.temperature || 0) || 1,
-        top_p: +(process.env.top_p || 0) || 1,
-        max_tokens: process.env.max_tokens
-          ? +process.env.max_tokens
-          : undefined,
-      },
+      baseURL: 'https://d-oai-dev.openai.azure.com',
+      deployment: 'D-OAI-model-deploy',
     });
   }
 
@@ -25,10 +18,10 @@ export class Chat {
 
     const prompt =
       process.env.PROMPT ||
-        'Below is a code patch, please help me do a brief code review on it. Any bug risks and/or improvement suggestions are welcome:';
+      'Below is a code patch, please help me do a brief code review on it. Any bug risks and/or improvement suggestions are welcome:';
 
-    return `${prompt}, ${answerLanguage}:
-    ${patch}
+    return `${prompt}, ${answerLanguage}:        
+    ${patch}        
     `;
   };
 
@@ -40,9 +33,27 @@ export class Chat {
     console.time('code-review cost');
     const prompt = this.generatePrompt(patch);
 
-    const res = await this.chatAPI.sendMessage(prompt);
+    const events = await this.chatAPI.chat.completions.create({
+      stream: false,
+      messages: [
+        {
+          role: 'assistant',
+          content: prompt,
+        },
+      ],
+      // max_tokens: 800,
+      model: 'gpt-4o',
+      temperature: 0.0,
+    });
 
-    console.timeEnd('code-review cost');
-    return res.text;
+    let result = '';
+
+    for (const choice of events.choices) {
+      if (choice.message?.content) {
+        result += choice.message?.content;
+      }
+    }
+
+    return result;
   };
 }
