@@ -5,7 +5,8 @@ export class Chat {
   constructor(apikey: string) {
     this.chatAPI = new ChatGPTAPI({
       apiKey: apikey,
-      apiBaseUrl: 'https://d-oai-dev.openai.azure.com',
+      apiBaseUrl:
+        process.env.OPENAI_API_ENDPOINT || 'https://api.openai.com/v1',
       completionParams: {
         model: process.env.MODEL || 'gpt-4o',
         temperature: +(process.env.temperature || 0) || 1,
