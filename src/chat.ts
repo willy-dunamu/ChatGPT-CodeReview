@@ -34,26 +34,31 @@ export class Chat {
     console.time('code-review cost');
     const prompt = this.generatePrompt(patch);
 
-    const events = await this.chatAPI.chat.completions.create({
-      stream: false,
-      messages: [
-        {
-          role: 'assistant',
-          content: prompt,
-        },
-      ],
-      model: 'gpt-4o',
-      temperature: 0.0,
-    });
+    try {
+      const events = await this.chatAPI.chat.completions.create({
+        stream: false,
+        messages: [
+          {
+            role: 'assistant',
+            content: prompt,
+          },
+        ],
+        model: 'gpt-4o',
+        temperature: 0.0,
+      });
 
-    let result = '';
+      let result = '';
 
-    for (const choice of events.choices) {
-      if (choice.message?.content) {
-        result += choice.message?.content;
+      for (const choice of events.choices) {
+        if (choice.message?.content) {
+          result += choice.message?.content;
+        }
       }
-    }
 
-    return result;
+      return result;
+    } catch (error) {
+      console.error('Error in code review: ', error);
+      return '';
+    }
   };
 }
